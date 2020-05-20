@@ -47,7 +47,7 @@ export namespace SchemaBuilder {
       }
 
       for (const predicate of node.predicates) {
-        schema += buildPredicateSchema(predicate.args);
+        schema += buildPredicateSchema(node, predicate.args);
       }
     }
 
@@ -55,10 +55,8 @@ export namespace SchemaBuilder {
   }
 
   function buildNodeSchema(nodeType: string, properties: PropertyMetadata[], predicates: PredicateMetadata[]): string {
-    const _predicates = predicates.map(p => `  ${p.args.name}: [${p.args.type().name}]`);
-    const _properties = properties.map(
-      p => `  ${p.args.name}: ${p.args.isArray ? toArrayType(p.args.type) : p.args.type}`
-    );
+    const _predicates = predicates.map(p => `  ${nodeType}.${p.args.name}`);
+    const _properties = properties.map(p => `  ${nodeType}.${p.args.name}`);
 
     return `type ${nodeType} {
 ${_properties.concat(_predicates).join('\n')}
@@ -70,22 +68,34 @@ ${_properties.concat(_predicates).join('\n')}
     const parts = [];
 
     const index = node.indices.find(i => i.args.propertyName === property.propertyName);
-    parts.push(`${property.name}: ${property.isArray ? toArrayType(property.type) : property.type}`);
+    parts.push(`${node.type}.${property.name}: ${property.isArray ? toArrayType(property.type) : property.type}`);
 
     if (index) {
-      parts.push(`@index(${index.args.type})`);
+      const type = index.args.type
+
+      if (typeof type === 'string') {
+        parts.push(`@index(${type})`);
+      }
+
+      if (Array.isArray(type) && type.length > 0) {
+        parts.push(`@index(${type.join(',')})`);
+      }
     }
 
     return parts.join(' ') + ' .\n';
   }
 
-  function buildPredicateSchema(predicate: PredicateMetadata.IArgs): string {
+  function buildPredicateSchema(node: INodeSchemaDefinition, predicate: PredicateMetadata.IArgs): string {
     const parts = [];
 
-    parts.push(`${predicate.name}: ${toArrayType('uid')}`);
+    parts.push(`${node.type}.${predicate.name}: ${toArrayType('uid')}`);
 
     if (predicate.count) {
       parts.push(`@count`);
+    }
+
+    if (predicate.reverse) {
+      parts.push(`@reverse`);
     }
 
     return parts.join(' ') + ' .\n';

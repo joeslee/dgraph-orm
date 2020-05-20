@@ -1,5 +1,5 @@
 import { MetadataStorage } from '../metadata/storage';
-import { Constructor } from 'src/utils/class';
+import { Constructor } from '../utils/class';
 
 /**
  * @category PublicAPI

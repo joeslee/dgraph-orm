@@ -1,4 +1,4 @@
-import { Quad } from 'n3';
+import { Quad } from '@xanthous/n3';
 import uniqid from 'uniqid';
 import { plainToClass } from 'class-transformer';
 

@@ -46,5 +46,10 @@ export namespace PredicateMetadata {
      * Should dgraph count the number of edges out of each node.
      */
     count: boolean;
+
+    /**
+     * Should dgraph computes the reverse edges.
+     */
+    reverse: boolean;
   }
 }

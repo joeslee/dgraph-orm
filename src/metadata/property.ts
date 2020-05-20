@@ -1,4 +1,4 @@
-import { PropertyType } from '..';
+import { Index, PropertyType } from '..';
 
 export class PropertyMetadata {
   constructor(readonly args: PropertyMetadata.IArgs) {
@@ -50,7 +50,7 @@ export namespace IndexMetadata {
     /**
      * Type of the index.
      */
-    type: string;
+    type: Index.IndexType | Index.IndexType[];
 
     /**
      * Target object which the metadata is attached to.

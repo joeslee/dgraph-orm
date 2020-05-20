@@ -29,11 +29,18 @@ export function Index(options: Index.IOptions): PropertyDecorator {
  * @category PublicAPI
  */
 export namespace Index {
+  export type IndexType = 'int'
+    | 'float'
+    | 'bool'
+    | 'geo'
+    | 'hash' | 'exact' | 'term' | 'fulltext' | 'trigram' // string
+    | 'year' | 'month' | 'day' | 'hour'; // dateTime
+
   /**
    * Options for the `Index` decorator.
    */
   export interface IOptions {
-    type: string;
+    type: IndexType | IndexType[];
   }
 }
 
@@ -44,7 +51,7 @@ export namespace Index {
  * @category PublicAPI
  */
 export function Property(options: Property.IOptions = {}): PropertyDecorator {
-  return function(target: Object, propertyName: string): void {
+  return (target: object, propertyName: string): void => {
     const { type, isArray } = Private.sanitizePropertyType(options, target, propertyName);
     if (!type || !Private.isPropertyType(type)) {
       throw new Error(
@@ -55,13 +62,13 @@ export function Property(options: Property.IOptions = {}): PropertyDecorator {
 
     let name = options.name;
     if (!name) {
-      name = `${target.constructor.name}.${propertyName}`;
+      name = propertyName;
     }
 
     // When we load data into the class, we will have a new property
     // defined as the auto-generated name, we need to make sure property with predicate
     // decorator returns the correct value.
-    Expose({ name, toClassOnly: true })(target, propertyName);
+    Expose({ name, toClassOnly: true })(target, name);
 
     MetadataStorage.Instance.addPropertyMetadata({
       type,

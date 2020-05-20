@@ -4,6 +4,7 @@
   "description": "dgraph ORM in TypeScript",
   "main": "dist/index.js",
   "author": "Xanthous Tech Developers <hi@x-tech.io>",
+  "types": "dist/index.d.ts",
   "contributors": [
     {
       "name": "Simon Liang",
@@ -18,6 +19,7 @@
   "license": "MIT",
   "scripts": {
     "clean": "rimraf dist",
+    "dev": "tsc -p tsconfig.build.json -w",
     "build": "tsc -p tsconfig.build.json",
     "prepublish": "npm run test && npm run clean && npm run build",
     "lint": "eslint ./src --ext .ts",

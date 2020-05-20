@@ -13,7 +13,7 @@ export function Predicate(options: Predicate.IOptions): PropertyDecorator {
   return function(target: Object, propertyName: string): void {
     let name = options.name;
     if (!name) {
-      name = `${target.constructor.name}.${propertyName}`;
+      name = propertyName;
     }
 
     // Exclude the predicates to prevent class-transformer from doing unnecessary stuff..
@@ -21,7 +21,8 @@ export function Predicate(options: Predicate.IOptions): PropertyDecorator {
 
     MetadataStorage.Instance.addPredicateMetadata({
       facet: options.facet,
-      count: options.count !== undefined ? options.count : true,
+      count: !!options.count,
+      reverse: !!options.reverse,
       type: options.type,
       name,
       target,
@@ -60,6 +61,11 @@ export namespace Predicate {
      * Should dgraph count the number of edges out of each node.
      */
     count?: boolean;
+
+    /**
+     * Should dgraph computes the reverse edges
+     */
+    reverse?: boolean;
   }
 }
 
